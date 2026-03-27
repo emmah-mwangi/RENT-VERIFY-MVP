@@ -1,0 +1,5 @@
+{
+  "appId": "com.rentverifier.app",
+  "appName": "Rent Verifier",
+  "webDir": "npx cap add android"
+}

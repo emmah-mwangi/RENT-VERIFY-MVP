@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rent Verifier | Secure Access</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <script src="https://kit.fontawesome.com/a2e0b7b6b0.js" crossorigin="anonymous"></script>
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="auth-container">
+
+  <div class="auth-card">
+
+    <div class="brand">
+      <h1>Rent Verifier</h1>
+      <p>Secure rent verification & fraud prevention</p>
+    </div>
+
+    <!-- SIGN IN -->
+    <form id="loginForm">
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="loginIdentifier" placeholder="email" required>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn primary-btn">
+        Sign in
+      </button>
+    </form>
+
+    <div class="divider"><span>or</span></div>
+
+    <div id="g_id_onload"
+         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+         data-login_uri="http://localhost:5000/api/auth/google"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="continue_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+    </div>
+
+    <p class="switch-text">
+      Don’t have an account?
+      <a href="#" id="openSignup">Create account</a>
+    </p>
+  </div>
+
+</div>
+
+<!-- SIGN UP MODAL -->
+<div class="modal" id="signupModal">
+  <div class="modal-card">
+
+    <span class="close" id="closeSignup">&times;</span>
+
+    <h2>Create your account</h2>
+    <p class="modal-subtitle">Professional access to Rent Verifier</p>
+
+    <form id="signupForm">
+
+      <div class="input-group">
+        <label for="signupName">Full Name</label>
+        <input type="text" id="signupName" required>
+      </div>
+
+      <div class="input-group">
+        <label for="signupEmail">Email Address</label>
+        <input type="email" id="signupEmail" required>
+      </div>
+
+      <div class="input-group">
+        <label for="signupPhone">Phone Number</label>
+        <input type="tel" id="signupPhone" placeholder="+254 7XX XXX XXX" required>
+      </div>
+
+      <div class="input-group">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" required>
+      </div>
+
+      <div class="input-group">
+        <label for="signupConfirmPassword">Confirm Password</label>
+        <input type="password" id="signupConfirmPassword" required>
+      </div>
+
+      <button type="submit" class="btn primary-btn">
+        Create account
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+</body>
+</html>
