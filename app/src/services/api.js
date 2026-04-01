@@ -1,5 +1,5 @@
 // API Service - All backend communication
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://rent-verify-mvp.onrender.com/api';
 
 export const apiClient = {
   async request(endpoint, options = {}) {
