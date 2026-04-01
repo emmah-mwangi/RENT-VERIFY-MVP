@@ -404,30 +404,32 @@ router.get("/", verifyToken, (req, res) => {
 
 // ===== HELPER: Parse SMS Message =====
 function parseSMSMessage(messageText) {
-  // Pattern for M-PESA or bank message
-  // Expected format: "Dear LINET KES 5000.00 has been credited to your account 0700......4364 Ref:1732861643987 on 13-NOV-2025 13:22:40 PM"
-
-  const amountMatch = messageText.match(/KES\s+([\d,]+\.?\d*)/i);
+  const amountMatch = messageText.match(/KES\s*([\d,]+\.?\d*)/i);
   const referenceMatch = messageText.match(/Ref[:#]?\s*([^\s]+)/i);
-  const dateMatch = messageText.match(/on\s+(\d{2}[-\/]\d{2}[-\/]\d{4}|\d{2}-[A-Z]{3}-\d{4})/i);
-let date = dateMatch ? dateMatch[1] : null;
-// Normalize 01/04/2026 → 01-APR-2026
-if (date && date.includes('/')) {
-  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  const parts = date.split('/');
-  date = `${parts[0]}-${months[parseInt(parts[1])-1]}-${parts[2]}`;
-}
+  const dateMatch = messageText.match(/on\s+(\d{1,2}[-\/]\w+[-\/]\d{4})/i);
+
   if (!amountMatch) return null;
 
-  const amount = parseFloat(amountMatch[1].replace(/,/g, ""));
+  const amount = parseFloat(amountMatch[1].replace(/,/g, ''));
   const reference = referenceMatch ? referenceMatch[1] : null;
-  const date = dateMatch ? dateMatch[1] : null;
 
-  return {
-    amount,
-    reference,
-    date
-  };
+  let date = null;
+  if (dateMatch) {
+    const raw = dateMatch[1];
+    const months = { JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11,
+      JANUARY:0,FEBRUARY:1,MARCH:2,APRIL:3,JUNE:5,JULY:6,AUGUST:7,SEPTEMBER:8,OCTOBER:9,NOVEMBER:10,DECEMBER:11 };
+    const parts = raw.replace(/\//g, '-').split('-');
+    const monthKey = parts[1].toUpperCase().trim();
+    const monthNum = months[monthKey];
+    if (monthNum !== undefined) {
+      const shortMonths = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      date = `${parts[0].padStart(2,'0')}-${shortMonths[monthNum]}-${parts[2]}`;
+    } else {
+      date = raw;
+    }
+  }
+
+  return { amount, reference, date };
 }
 
 // ===== HELPER: Verify Receipt Against Message =====
