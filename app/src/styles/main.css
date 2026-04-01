@@ -647,12 +647,28 @@ body {
   opacity: 0.6;
   pointer-events: none;
 }
-/* Fix faded table rows */
+/* Fix table row and label visibility */
 .verification-table tbody tr td {
-  color: #1a1a2e !important;
-  opacity: 1 !important;
+  color: #374151 !important;
 }
 
-.verification-table tbody tr {
-  opacity: 1 !important;
+.panel-content .input-group label {
+  color: #374151 !important;
+}
+
+.panel-content .input-group input,
+.panel-content .input-group textarea,
+.panel-content .input-group input[type="file"] {
+  background: #f8fafc !important;
+  color: #1e293b !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.panel-content .input-group input::placeholder,
+.panel-content .input-group textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.panel-content .input-group small {
+  color: #64748b !important;
 }

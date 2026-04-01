@@ -8,21 +8,26 @@ export const apiClient = {
       'Content-Type': 'application/json',
       ...options.headers,
     };
+
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
+
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, {
         ...options,
         headers,
       });
+
       const contentType = response.headers.get('content-type') || '';
       const data = contentType.includes('application/json')
         ? await response.json()
         : { message: await response.text() };
+
       if (!response.ok) {
         throw new Error(data.message || 'API Error');
       }
+
       return data;
     } catch (error) {
       console.error('API Error:', error);
@@ -30,7 +35,7 @@ export const apiClient = {
     }
   },
 
-  // ===== AUTH =====
+  // Auth endpoints
   signup(fullName, email, phone, password) {
     return this.request('/auth/signup', {
       method: 'POST',
@@ -45,7 +50,7 @@ export const apiClient = {
     });
   },
 
-  // ===== RECEIPTS =====
+  // Receipts endpoints
   uploadReceipt(formData) {
     return fetch(`${API_BASE}/receipts/add-receipt`, {
       method: 'POST',
@@ -55,7 +60,9 @@ export const apiClient = {
       body: formData,
     }).then(async (response) => {
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'API Error');
+      if (!response.ok) {
+        throw new Error(data.message || 'API Error');
+      }
       return data;
     });
   },
@@ -69,18 +76,5 @@ export const apiClient = {
       method: 'POST',
       body: JSON.stringify({ messageText: smsMessage }),
     });
-  },
-
-  // ===== VERIFICATION =====
-  // Matches a receipt against a parsed SMS and returns verified/suspicious/failed
-  verifyReceipt(receiptId, landlordMessageId) {
-    return this.request('/receipts/verify', {
-      method: 'POST',
-      body: JSON.stringify({ receiptId, landlordMessageId }),
-    });
-  },
-
-  getVerificationHistory() {
-    return this.request('/receipts/verification-history');
   },
 };
