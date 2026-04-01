@@ -409,8 +409,14 @@ function parseSMSMessage(messageText) {
 
   const amountMatch = messageText.match(/KES\s+([\d,]+\.?\d*)/i);
   const referenceMatch = messageText.match(/Ref[:#]?\s*([^\s]+)/i);
-  const dateMatch = messageText.match(/on\s+(\d{2}-[A-Z]{3}-\d{4})/i);
-
+  const dateMatch = messageText.match(/on\s+(\d{2}[-\/]\d{2}[-\/]\d{4}|\d{2}-[A-Z]{3}-\d{4})/i);
+let date = dateMatch ? dateMatch[1] : null;
+// Normalize 01/04/2026 → 01-APR-2026
+if (date && date.includes('/')) {
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const parts = date.split('/');
+  date = `${parts[0]}-${months[parseInt(parts[1])-1]}-${parts[2]}`;
+}
   if (!amountMatch) return null;
 
   const amount = parseFloat(amountMatch[1].replace(/,/g, ""));
