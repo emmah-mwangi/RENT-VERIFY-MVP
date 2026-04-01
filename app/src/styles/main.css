@@ -10,7 +10,7 @@
   --danger: #ef4444;
   --dark: #1f2937;
   --dark-light: #374151;
-  --gray: #6b7280;
+  --gray: #1F2937;
   --gray-light: #f3f4f6;
   --white: #ffffff;
   --border: #e5e7eb;
@@ -646,4 +646,13 @@ body {
 .loading {
   opacity: 0.6;
   pointer-events: none;
+}
+/* Fix faded table rows */
+.verification-table tbody tr td {
+  color: #1a1a2e !important;
+  opacity: 1 !important;
+}
+
+.verification-table tbody tr {
+  opacity: 1 !important;
 }
