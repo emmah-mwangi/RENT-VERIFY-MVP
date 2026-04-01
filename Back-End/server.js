@@ -7,7 +7,14 @@ const authRoutes = require("./routes/auth");
 const receiptsRoutes = require("./routes/receipts");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://rent-verify-mvp.vercel.app',
+    /\.vercel\.app$/
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve uploaded files
