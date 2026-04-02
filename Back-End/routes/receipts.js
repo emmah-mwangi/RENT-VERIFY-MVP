@@ -267,31 +267,43 @@ router.get("/pending", verifyToken, (req, res) => {
 
 // ===== HELPER: Parse SMS =====
 function parseSMSMessage(messageText) {
+  // Amount — handles: KES 9,500.00 or KES9500
   const amountMatch = messageText.match(/KES\s*([\d,]+\.?\d*)/i);
-  const referenceMatch = messageText.match(/Ref[:#]?\s*(\d+)/i);
-  const dateMatch = messageText.match(/on\s+(\d{1,2}[-\/]\w+[-\/]\d{4})/i);
-
   if (!amountMatch) return null;
-
   const amount = parseFloat(amountMatch[1].replace(/,/g, ''));
+
+  // Reference — only digits after Ref: stops at space
+  const referenceMatch = messageText.match(/Ref[:#]?\s*(\d+)/i);
   const reference = referenceMatch ? referenceMatch[1] : null;
 
+  // Date — handles ALL these formats:
+  // "on 03-NOV-2026", "03-NOV-2026", "03/11/2026", "2026-11-03"
+  const datePatterns = [
+    /on\s+(\d{1,2}-[A-Z]{3}-\d{4})/i,        // on 03-NOV-2026
+    /(\d{1,2}-[A-Z]{3}-\d{4})/i,              // 03-NOV-2026 (no "on")
+    /on\s+(\d{1,2}\/\d{1,2}\/\d{4})/i,        // on 03/11/2026
+    /(\d{1,2}\/\d{1,2}\/\d{4})/i,             // 03/11/2026
+  ];
+
+  const shortMonths = ['JAN','FEB','MAR','APR','MAY','JUN',
+                       'JUL','AUG','SEP','OCT','NOV','DEC'];
+  
   let date = null;
-  if (dateMatch) {
-    const raw = dateMatch[1];
-    const months = {
-      JAN:0, FEB:1, MAR:2, APR:3, MAY:4, JUN:5, JUL:6, AUG:7, SEP:8, OCT:9, NOV:10, DEC:11,
-      JANUARY:0, FEBRUARY:1, MARCH:2, APRIL:3, JUNE:5, JULY:6, AUGUST:7,
-      SEPTEMBER:8, OCTOBER:9, NOVEMBER:10, DECEMBER:11
-    };
-    const parts = raw.replace(/\//g, '-').split('-');
-    const monthKey = parts[1].toUpperCase().trim();
-    const monthNum = months[monthKey];
-    if (monthNum !== undefined) {
-      const shortMonths = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-      date = `${parts[0].padStart(2,'0')}-${shortMonths[monthNum]}-${parts[2]}`;
-    } else {
-      date = raw;
+  for (const pattern of datePatterns) {
+    const match = messageText.match(pattern);
+    if (match) {
+      const raw = match[1];
+      if (raw.includes('/')) {
+        // Convert 03/11/2026 → 03-NOV-2026
+        const parts = raw.split('/');
+        const monthIdx = parseInt(parts[1]) - 1;
+        if (monthIdx >= 0 && monthIdx < 12) {
+          date = `${parts[0].padStart(2,'0')}-${shortMonths[monthIdx]}-${parts[2]}`;
+        }
+      } else {
+        date = raw.toUpperCase();
+      }
+      break;
     }
   }
 
