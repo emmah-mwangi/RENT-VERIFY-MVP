@@ -268,7 +268,7 @@ router.get("/pending", verifyToken, (req, res) => {
 // ===== HELPER: Parse SMS =====
 function parseSMSMessage(messageText) {
   const amountMatch = messageText.match(/KES\s*([\d,]+\.?\d*)/i);
-  const referenceMatch = messageText.match(/Ref[:#]?\s*([^\s,]+)/i);
+  const referenceMatch = messageText.match(/Ref[:#]?\s*(\d+)/i);
   const dateMatch = messageText.match(/on\s+(\d{1,2}[-\/]\w+[-\/]\d{4})/i);
 
   if (!amountMatch) return null;
